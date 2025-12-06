@@ -1,0 +1,5 @@
+{
+  "name": "智动秒表 (SmartMotion Stopwatch)",
+  "description": "一个现代化的中文运动计时器，具备分段记录、历史追踪以及基于 Google Gemini 的 AI 运动分析功能。",
+  "requestFramePermissions": []
+}
