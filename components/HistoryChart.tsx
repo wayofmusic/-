@@ -36,7 +36,7 @@ export const HistoryChart: React.FC<HistoryChartProps> = ({ sessions }) => {
             cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
             contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9', borderRadius: '8px' }}
             itemStyle={{ color: '#4ade80' }}
-            formatter={(value: number) => [`${value} 分钟`, '时长']}
+            formatter={(value: any) => [`${value} 分钟`, '时长']}
           />
           <Bar dataKey="durationMinutes" radius={[4, 4, 0, 0]}>
              {data.map((entry, index) => (

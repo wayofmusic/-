@@ -2,8 +2,8 @@ import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { WorkoutSession, AIAnalysisResult } from '../types';
 
 // Initialize the client directly using the environment variable as per guidelines.
-// We assume process.env.API_KEY is available and valid.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// We assume process.env.GEMINI_API_KEY is available and valid.
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export const analyzeWorkouts = async (sessions: WorkoutSession[]): Promise<AIAnalysisResult> => {
   if (sessions.length === 0) {

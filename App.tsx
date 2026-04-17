@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { TimerDisplay } from './components/TimerDisplay';
 import { Button } from './components/Button';
 import { LapList } from './components/LapList';
@@ -6,7 +6,7 @@ import { AIAnalysis } from './components/AIAnalysis';
 import { HistoryChart } from './components/HistoryChart';
 import { Lap, WorkoutType, WorkoutSession } from './types';
 import { generateId, formatDuration, formatTime } from './utils';
-import { Trash2, History, Timer as TimerIcon, Save, Play, Pause, Square, Flag, Hourglass, Plus, Minus } from 'lucide-react';
+import { Trash2, History, Timer as TimerIcon, Save, Play, Pause, Flag, Hourglass, Plus, Minus } from 'lucide-react';
 
 // Sound helper function
 const playNotificationSound = () => {
@@ -57,6 +57,25 @@ export default function App() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [saveDuration, setSaveDuration] = useState(0);
   const [selectedType, setSelectedType] = useState<WorkoutType>(WorkoutType.RUNNING);
+
+  // Proportional Scaling State
+  const [windowScale, setWindowScale] = useState(1);
+
+  // Measure and Scale Window
+  useEffect(() => {
+    const handleResize = () => {
+      const BASE_WIDTH = 480;
+      const BASE_HEIGHT = 800;
+      const scaleX = window.innerWidth / BASE_WIDTH;
+      const scaleY = window.innerHeight / BASE_HEIGHT;
+      // 0.95 to leave a little margin around the "window"
+      setWindowScale(Math.min(scaleX, scaleY) * 0.95);
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Refs
   const startTimeRef = useRef<number>(0);
@@ -234,9 +253,19 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans selection:bg-brand-500 selection:text-white pb-24 md:pb-12">
-      {/* Header */}
-      <header className="px-6 py-4 flex items-center justify-between border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 app-drag-region">
+    <div className="fixed inset-0 bg-[#020617] flex items-center justify-center overflow-hidden">
+      <div 
+        className="bg-slate-900 border border-slate-700/80 shadow-2xl shadow-brand-500/10 relative flex flex-col rounded-[2.5rem] overflow-hidden text-slate-100 font-sans selection:bg-brand-500 selection:text-white"
+        style={{
+          width: '480px',
+          height: '800px',
+          transform: `scale(${windowScale})`,
+          transformOrigin: 'center center',
+          flexShrink: 0,
+        }}
+      >
+        {/* Header */}
+        <header className="px-6 py-4 flex items-center justify-between border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 app-drag-region">
         <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 to-teal-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
                 <TimerIcon className="w-5 h-5 text-white" />
@@ -260,7 +289,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 max-w-2xl pt-6">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-6 px-4 pb-12 w-full">
         {view === 'timer' ? (
           <div className="flex flex-col animate-fade-in">
              
@@ -456,7 +485,7 @@ export default function App() {
 
       {/* Save Modal */}
       {showSaveModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="absolute inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
             <div className="bg-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-slate-700 scale-100 transition-transform">
                 <h3 className="text-xl font-bold text-white mb-4">保存本次运动</h3>
                 <div className="mb-6">
@@ -492,6 +521,7 @@ export default function App() {
             </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
